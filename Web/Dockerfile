@@ -2,20 +2,22 @@
 
 
 
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["Web.csproj", "."]
-RUN dotnet restore "./Web.csproj"
+WORKDIR /source
+
+# copy csproj and restore as distinct layers
+COPY ["Web/Web.csproj", "Web/"]
+RUN dotnet restore "Web/Web.csproj"
+
+# copy everything else and build app
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "./Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR /source/Web
+RUN dotnet publish -o /app
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-FROM base AS final
+# final stage/image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app .
 ENTRYPOINT ["dotnet", "Web.dll"]
