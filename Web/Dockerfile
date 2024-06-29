@@ -7,7 +7,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /source
 
 # copy csproj and restore as distinct layers
-COPY ["Web.csproj", "."]
+COPY ["Web.csproj", "/"]
 RUN dotnet restore "Web.csproj"
 
 # copy everything else and build app
