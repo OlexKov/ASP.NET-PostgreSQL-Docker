@@ -8,7 +8,7 @@ WORKDIR /source
 
 # copy csproj and restore as distinct layers
 COPY ["Web.csproj", "Web/"]
-RUN dotnet restore "Web.csproj"
+RUN dotnet restore "Web/Web.csproj"
 
 # copy everything else and build app
 COPY . .
