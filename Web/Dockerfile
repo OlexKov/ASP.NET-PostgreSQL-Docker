@@ -7,12 +7,12 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /source
 
 # copy csproj and restore as distinct layers
-COPY ["Web.csproj", "."]
-RUN dotnet restore "Web.csproj"
+COPY ["Web/Web.csproj", "Web/"]
+RUN dotnet restore "Web/Web.csproj"
 
 # copy everything else and build app
 COPY . .
-WORKDIR /source
+WORKDIR /source/Web
 RUN dotnet publish -o /app
 
 
