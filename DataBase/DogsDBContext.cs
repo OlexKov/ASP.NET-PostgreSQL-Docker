@@ -4,8 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataBase
 {
-	public class DogsDBContext(DbContextOptions<DogsDBContext> options) : DbContext(options)
+	public class DogsDBContext : DbContext
 	{
+		public DogsDBContext(DbContextOptions options) : base(options)
+		{
+			Database.Migrate();
+		}
 		public DbSet<Dog> Dogs { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

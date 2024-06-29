@@ -11,7 +11,7 @@ namespace Web
 			var builder = WebApplication.CreateBuilder(args);
 
 			builder.Services.AddDbContext<DogsDBContext>(opt=>
-		        	opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+		        	opt.UseNpgsql(builder.Configuration.GetConnectionString("AwsPostageContainer")));
 
 			// Add services to the container.
 			builder.Services.AddControllersWithViews();
