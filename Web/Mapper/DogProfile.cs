@@ -8,7 +8,7 @@ namespace Web.Mapper
 	{
 		public DogProfile()
 		{
-			CreateMap<Dog, DogViewModel>();
+			CreateMap<Dog, DogViewModel>().ReverseMap();
 		}
 	}
 }

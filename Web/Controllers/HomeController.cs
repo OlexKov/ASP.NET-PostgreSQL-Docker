@@ -1,6 +1,7 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DataBase;
+using DataBase.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -23,7 +24,20 @@ namespace Web.Controllers
 			return View(dog);
         }
 
-		[HttpPost]
+        public IActionResult Edit(DogViewModel dog)
+        {
+            return View(dog);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditItem(DogViewModel dog)
+        {
+			context.Update(maper.Map<Dog>(dog));
+			await context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> DeleteItem(int Id)
         {
 			var dog = await context.Dogs.FirstOrDefaultAsync(x => x.Id == Id);
@@ -32,8 +46,7 @@ namespace Web.Controllers
                 context.Remove(dog);
 				await context.SaveChangesAsync();
             }
-			
-            return RedirectToAction("Index");
+		    return RedirectToAction("Index");
         }
 
         public IActionResult Privacy()
