@@ -1,24 +1,42 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using DataBase;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using Web.Models;
 
 namespace Web.Controllers
 {
-	public class HomeController : Controller
+	public class HomeController(DogsDBContext context,IMapper maper) : Controller
 	{
-		private readonly ILogger<HomeController> _logger;
+		
 
-		public HomeController(ILogger<HomeController> logger)
+		public async Task<IActionResult> Index()
 		{
-			_logger = logger;
+			var dogs = await context.Dogs.ProjectTo<DogViewModel>(maper.ConfigurationProvider).ToArrayAsync();
+			return View(dogs);
 		}
 
-		public IActionResult Index()
-		{
-			return View();
-		}
+        public IActionResult Delete(DogViewModel dog)
+        {
+			return View(dog);
+        }
 
-		public IActionResult Privacy()
+		[HttpPost]
+        public async Task<IActionResult> DeleteItem(int Id)
+        {
+			var dog = await context.Dogs.FirstOrDefaultAsync(x => x.Id == Id);
+			if (dog != null) 
+			{
+                context.Remove(dog);
+				await context.SaveChangesAsync();
+            }
+			
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Privacy()
 		{
 			return View();
 		}

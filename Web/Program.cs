@@ -13,6 +13,8 @@ namespace Web
 			builder.Services.AddDbContext<DogsDBContext>(opt=>
 		        	opt.UseNpgsql(builder.Configuration.GetConnectionString("AwsPostageContainer")));
 
+			builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 			// Add services to the container.
 			builder.Services.AddControllersWithViews();
 
