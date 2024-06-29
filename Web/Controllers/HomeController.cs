@@ -46,7 +46,7 @@ namespace Web.Controllers
                 context.Remove(dog);
 				await context.SaveChangesAsync();
             }
-		    return RedirectToAction("Index");
+		    return  RedirectToAction("Index");
         }
 
         public IActionResult Privacy()
