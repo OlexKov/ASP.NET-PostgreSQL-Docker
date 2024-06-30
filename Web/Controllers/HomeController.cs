@@ -9,30 +9,50 @@ using Web.Models;
 
 namespace Web.Controllers
 {
-	public class HomeController(DogsDBContext context,IMapper maper) : Controller
+	public class HomeController(DogsDBContext context,IMapper mapper) : Controller
 	{
-		
-
 		public async Task<IActionResult> Index()
 		{
-			var dogs = await context.Dogs.ProjectTo<DogViewModel>(maper.ConfigurationProvider).ToArrayAsync();
+			var dogs = await context.Dogs.ProjectTo<DogViewModel>(mapper.ConfigurationProvider).ToArrayAsync();
 			return View(dogs);
 		}
 
-        public IActionResult Delete(DogViewModel dog)
+        public async Task<IActionResult> Delete(int id)
         {
-			return View(dog);
+            var dog = await context.Dogs.FirstOrDefaultAsync(x => x.Id == id);
+            if (dog != null)
+                return View(mapper.Map<DogViewModel>(dog));
+            else
+                return  RedirectToAction("Error");
         }
 
-        public IActionResult Edit(DogViewModel dog)
+        public async Task<IActionResult> Edit(int id)
         {
-            return View(dog);
+            var dog = await context.Dogs.FirstOrDefaultAsync(x => x.Id == id);
+            if (dog != null)
+                return View(mapper.Map<DogViewModel>(dog));
+            else
+                return RedirectToAction("Error");
         }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateItem(DogViewModel dog)
+        {
+            await context.Dogs.AddAsync(mapper.Map<Dog>(dog));
+            await context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> EditItem(DogViewModel dog)
         {
-			context.Update(maper.Map<Dog>(dog));
+			context.Update(mapper.Map<Dog>(dog));
 			await context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
@@ -46,8 +66,11 @@ namespace Web.Controllers
                 context.Remove(dog);
 				await context.SaveChangesAsync();
             }
-		    return  RedirectToAction("Index");
+			else  RedirectToAction("Error");
+            return  RedirectToAction("Index");
         }
+
+
 
         public IActionResult Privacy()
 		{
